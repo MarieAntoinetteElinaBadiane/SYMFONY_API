@@ -43,6 +43,7 @@ class Partenaire
      */
     private $compte;
 
+    
     public function __construct()
     {
         $this->Partenaire = new ArrayCollection();
@@ -126,4 +127,6 @@ class Partenaire
 
         return $this;
     }
+
+  
 }
