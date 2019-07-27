@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -32,14 +34,19 @@ class Partenaire
     private $raison_sociale;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\ManyToMany(targetEntity="App\Entity\User", inversedBy="partenaires")
      */
-    private $login;
+    private $Partenaire;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\ManyToOne(targetEntity="App\Entity\Compte", inversedBy="Compte")
      */
-    private $password;
+    private $compte;
+
+    public function __construct()
+    {
+        $this->Partenaire = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -82,26 +89,40 @@ class Partenaire
         return $this;
     }
 
-    public function getLogin(): ?string
+    /**
+     * @return Collection|User[]
+     */
+    public function getPartenaire(): Collection
     {
-        return $this->login;
+        return $this->Partenaire;
     }
 
-    public function setLogin(string $login): self
+    public function addPartenaire(User $partenaire): self
     {
-        $this->login = $login;
+        if (!$this->Partenaire->contains($partenaire)) {
+            $this->Partenaire[] = $partenaire;
+        }
 
         return $this;
     }
 
-    public function getPassword(): ?string
+    public function removePartenaire(User $partenaire): self
     {
-        return $this->password;
+        if ($this->Partenaire->contains($partenaire)) {
+            $this->Partenaire->removeElement($partenaire);
+        }
+
+        return $this;
     }
 
-    public function setPassword(string $password): self
+    public function getCompte(): ?Compte
     {
-        $this->password = $password;
+        return $this->compte;
+    }
+
+    public function setCompte(?Compte $compte): self
+    {
+        $this->compte = $compte;
 
         return $this;
     }

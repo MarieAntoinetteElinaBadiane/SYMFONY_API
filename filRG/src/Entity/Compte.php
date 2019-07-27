@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -25,6 +27,16 @@ class Compte
      * @ORM\Column(type="integer")
      */
     private $montant;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Partenaire", mappedBy="compte")
+     */
+    private $Compte;
+
+    public function __construct()
+    {
+        $this->Compte = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -51,6 +63,37 @@ class Compte
     public function setMontant(int $montant): self
     {
         $this->montant = $montant;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Partenaire[]
+     */
+    public function getCompte(): Collection
+    {
+        return $this->Compte;
+    }
+
+    public function addCompte(Partenaire $compte): self
+    {
+        if (!$this->Compte->contains($compte)) {
+            $this->Compte[] = $compte;
+            $compte->setCompte($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCompte(Partenaire $compte): self
+    {
+        if ($this->Compte->contains($compte)) {
+            $this->Compte->removeElement($compte);
+            // set the owning side to null (unless already changed)
+            if ($compte->getCompte() === $this) {
+                $compte->setCompte(null);
+            }
+        }
 
         return $this;
     }
