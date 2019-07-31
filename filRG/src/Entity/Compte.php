@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\CompteRepository")
@@ -21,21 +22,21 @@ class Compte
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $numerocompte;
+    private $numero;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="float")
      */
-    private $montant;
+    private $montan;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Partenaire", mappedBy="compte")
+     * @ORM\OneToMany(targetEntity="App\Entity\Operation", mappedBy="compt")
      */
-    private $Compte;
+    private $operations;
 
     public function __construct()
     {
-        $this->Compte = new ArrayCollection();
+        $this->operations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -43,55 +44,55 @@ class Compte
         return $this->id;
     }
 
-    public function getNumerocompte(): ?string
+    public function getNumero(): ?string
     {
-        return $this->numerocompte;
+        return $this->numero;
     }
 
-    public function setNumerocompte(string $numerocompte): self
+    public function setNumero(string $numero): self
     {
-        $this->numerocompte = $numerocompte;
+        $this->numero = $numero;
 
         return $this;
     }
 
-    public function getMontant(): ?int
+    public function getMontan(): ?float
     {
-        return $this->montant;
+        return $this->montan;
     }
 
-    public function setMontant(int $montant): self
+    public function setMontan(float $montan): self
     {
-        $this->montant = $montant;
+        $this->montan = $montan;
 
         return $this;
     }
 
     /**
-     * @return Collection|Partenaire[]
+     * @return Collection|Operation[]
      */
-    public function getCompte(): Collection
+    public function getOperations(): Collection
     {
-        return $this->Compte;
+        return $this->operations;
     }
 
-    public function addCompte(Partenaire $compte): self
+    public function addOperation(Operation $operation): self
     {
-        if (!$this->Compte->contains($compte)) {
-            $this->Compte[] = $compte;
-            $compte->setCompte($this);
+        if (!$this->operations->contains($operation)) {
+            $this->operations[] = $operation;
+            $operation->setCompt($this);
         }
 
         return $this;
     }
 
-    public function removeCompte(Partenaire $compte): self
+    public function removeOperation(Operation $operation): self
     {
-        if ($this->Compte->contains($compte)) {
-            $this->Compte->removeElement($compte);
+        if ($this->operations->contains($operation)) {
+            $this->operations->removeElement($operation);
             // set the owning side to null (unless already changed)
-            if ($compte->getCompte() === $this) {
-                $compte->setCompte(null);
+            if ($operation->getCompt() === $this) {
+                $operation->setCompt(null);
             }
         }
 

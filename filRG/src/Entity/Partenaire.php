@@ -21,37 +21,59 @@ class Partenaire
     /**
      * @ORM\Column(type="string", length=255)
      */
+    private $mat;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
     private $ninea;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $adresse;
+    private $RS;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $raison_sociale;
+    private $RC;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\User", inversedBy="partenaires")
+     * @ORM\OneToMany(targetEntity="App\Entity\Operation", mappedBy="partenaire")
      */
-    private $Partenaire;
+    private $operations;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Compte", inversedBy="Compte")
+     * @ORM\ManyToMany(targetEntity="App\Entity\User", mappedBy="partenaire")
      */
-    private $compte;
+    private $users;
 
-    
+    /**
+     * @ORM\OneToOne(targetEntity="App\Entity\Compte", cascade={"persist", "remove"})
+     */
+    private $numCompte;
+
     public function __construct()
     {
-        $this->Partenaire = new ArrayCollection();
+        $this->operations = new ArrayCollection();
+        $this->users = new ArrayCollection();
     }
 
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getMat(): ?string
+    {
+        return $this->mat;
+    }
+
+    public function setMat(string $mat): self
+    {
+        $this->mat = $mat;
+
+        return $this;
     }
 
     public function getNinea(): ?string
@@ -66,26 +88,57 @@ class Partenaire
         return $this;
     }
 
-    public function getAdresse(): ?string
+    public function getRS(): ?string
     {
-        return $this->adresse;
+        return $this->RS;
     }
 
-    public function setAdresse(string $adresse): self
+    public function setRS(string $RS): self
     {
-        $this->adresse = $adresse;
+        $this->RS = $RS;
 
         return $this;
     }
 
-    public function getRaisonSociale(): ?string
+    public function getRC(): ?string
     {
-        return $this->raison_sociale;
+        return $this->RC;
     }
 
-    public function setRaisonSociale(string $raison_sociale): self
+    public function setRC(string $RC): self
     {
-        $this->raison_sociale = $raison_sociale;
+        $this->RC = $RC;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Operation[]
+     */
+    public function getOperations(): Collection
+    {
+        return $this->operations;
+    }
+
+    public function addOperation(Operation $operation): self
+    {
+        if (!$this->operations->contains($operation)) {
+            $this->operations[] = $operation;
+            $operation->setPartenaire($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOperation(Operation $operation): self
+    {
+        if ($this->operations->contains($operation)) {
+            $this->operations->removeElement($operation);
+            // set the owning side to null (unless already changed)
+            if ($operation->getPartenaire() === $this) {
+                $operation->setPartenaire(null);
+            }
+        }
 
         return $this;
     }
@@ -93,40 +146,40 @@ class Partenaire
     /**
      * @return Collection|User[]
      */
-    public function getPartenaire(): Collection
+    public function getUsers(): Collection
     {
-        return $this->Partenaire;
+        return $this->users;
     }
 
-    public function addPartenaire(User $partenaire): self
+    public function addUser(User $user): self
     {
-        if (!$this->Partenaire->contains($partenaire)) {
-            $this->Partenaire[] = $partenaire;
+        if (!$this->users->contains($user)) {
+            $this->users[] = $user;
+            $user->addPartenaire($this);
         }
 
         return $this;
     }
 
-    public function removePartenaire(User $partenaire): self
+    public function removeUser(User $user): self
     {
-        if ($this->Partenaire->contains($partenaire)) {
-            $this->Partenaire->removeElement($partenaire);
+        if ($this->users->contains($user)) {
+            $this->users->removeElement($user);
+            $user->removePartenaire($this);
         }
 
         return $this;
     }
 
-    public function getCompte(): ?Compte
+    public function getNumCompte(): ?Compte
     {
-        return $this->compte;
+        return $this->numCompte;
     }
 
-    public function setCompte(?Compte $compte): self
+    public function setNumCompte(?Compte $numCompte): self
     {
-        $this->compte = $compte;
+        $this->numCompte = $numCompte;
 
         return $this;
     }
-
-  
 }

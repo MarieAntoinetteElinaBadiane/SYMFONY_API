@@ -38,32 +38,26 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $nom;
+    private $prenom;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $adresse;
+    private $nom;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\ManyToMany(targetEntity="App\Entity\Partenaire", inversedBy="users")
      */
-    private $telephone;
+    private $partenaire;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Partenaire", mappedBy="Partenaire")
+     * @ORM\Column(type="string", length=255)
      */
-    private $partenaires;
-
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Transaction", mappedBy="user")
-     */
-    private $User;
+    private $statut;
 
     public function __construct()
     {
-        $this->partenaires = new ArrayCollection();
-        $this->User = new ArrayCollection();
+        $this->partenaire = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -139,6 +133,18 @@ class User implements UserInterface
         // $this->plainPassword = null;
     }
 
+    public function getPrenom(): ?string
+    {
+        return $this->prenom;
+    }
+
+    public function setPrenom(string $prenom): self
+    {
+        $this->prenom = $prenom;
+
+        return $this;
+    }
+
     public function getNom(): ?string
     {
         return $this->nom;
@@ -151,43 +157,18 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getAdresse(): ?string
-    {
-        return $this->adresse;
-    }
-
-    public function setAdresse(string $adresse): self
-    {
-        $this->adresse = $adresse;
-
-        return $this;
-    }
-
-    public function getTelephone(): ?int
-    {
-        return $this->telephone;
-    }
-
-    public function setTelephone(int $telephone): self
-    {
-        $this->telephone = $telephone;
-
-        return $this;
-    }
-
     /**
      * @return Collection|Partenaire[]
      */
-    public function getPartenaires(): Collection
+    public function getPartenaire(): Collection
     {
-        return $this->partenaires;
+        return $this->partenaire;
     }
 
     public function addPartenaire(Partenaire $partenaire): self
     {
-        if (!$this->partenaires->contains($partenaire)) {
-            $this->partenaires[] = $partenaire;
-            $partenaire->addPartenaire($this);
+        if (!$this->partenaire->contains($partenaire)) {
+            $this->partenaire[] = $partenaire;
         }
 
         return $this;
@@ -195,41 +176,21 @@ class User implements UserInterface
 
     public function removePartenaire(Partenaire $partenaire): self
     {
-        if ($this->partenaires->contains($partenaire)) {
-            $this->partenaires->removeElement($partenaire);
-            $partenaire->removePartenaire($this);
+        if ($this->partenaire->contains($partenaire)) {
+            $this->partenaire->removeElement($partenaire);
         }
 
         return $this;
     }
 
-    /**
-     * @return Collection|Transaction[]
-     */
-    public function getUser(): Collection
+    public function getStatut(): ?string
     {
-        return $this->User;
+        return $this->statut;
     }
 
-    public function addUser(Transaction $user): self
+    public function setStatut(string $statut): self
     {
-        if (!$this->User->contains($user)) {
-            $this->User[] = $user;
-            $user->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeUser(Transaction $user): self
-    {
-        if ($this->User->contains($user)) {
-            $this->User->removeElement($user);
-            // set the owning side to null (unless already changed)
-            if ($user->getUser() === $this) {
-                $user->setUser(null);
-            }
-        }
+        $this->statut = $statut;
 
         return $this;
     }
